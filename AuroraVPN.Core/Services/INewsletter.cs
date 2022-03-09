@@ -12,7 +12,7 @@ namespace AuroraVPN.Core.Services
 {
     public interface INewsletter
     {
-        void SubscribeToNewsletter(NewsletterViewModel newsletter);
+        void SubscribeToNewsletter(string emailAddress);
     }
 
     public class Newsletter : INewsletter
@@ -26,14 +26,15 @@ namespace AuroraVPN.Core.Services
             _notyfService = notyfService;
         }
 
-        public void SubscribeToNewsletter(NewsletterViewModel newsletter)
+        public void SubscribeToNewsletter(string emailAddress)
         {
             DataLayer.Entities.Newsletter news = new DataLayer.Entities.Newsletter()
             {
-                EmailAddress = newsletter.EmailAddress
+                EmailAddress = emailAddress
             };
             _context.Newsletter.Add(news);
-            _notyfService.Success("Success Subscription!");
+            _context.SaveChanges();
+            _notyfService.Success("Successfully Subscribed !");
         }
     }
 }
