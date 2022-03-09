@@ -12,6 +12,7 @@ namespace AuroraVPN.DataLayer.Entities
         [Key]
         public int Id { get; set; }
         [Required]
+        [MaxLength(250)]
         [DataType(DataType.EmailAddress,ErrorMessage = "Please insert a valid email address !")]
         public string EmailAddress { get; set; }
     }

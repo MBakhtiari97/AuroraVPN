@@ -8,6 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Extensions;
+using AuroraVPN.Core.Services;
+using AuroraVPN.DataLayer.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace AuroraVPN.Web
 {
@@ -24,6 +29,21 @@ namespace AuroraVPN.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.BottomRight; });
+            #region Context
+
+            services.AddDbContext<AuroraContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("AuroraVPN"), b => b.MigrationsAssembly("AuroraVPN.Web"));
+            });
+
+            #endregion
+
+            #region IoC
+
+            services.AddTransient<INewsletter, Newsletter>();
+
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,6 +60,7 @@ namespace AuroraVPN.Web
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
+
             app.UseStaticFiles();
 
             app.UseRouting();
@@ -52,6 +73,8 @@ namespace AuroraVPN.Web
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            app.UseNotyf();
         }
     }
 }
